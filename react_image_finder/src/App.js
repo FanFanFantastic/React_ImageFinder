@@ -5,7 +5,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import NavBar from './components/navbar/NavBar';
 import SearchBar from './components/searchbar/SearchBar';
 
-
 function App() {
   return (
     <div className="App">
@@ -14,8 +13,6 @@ function App() {
           <SearchBar/>
       </MuiThemeProvider>    
     </div>
-
-
   );
 }
 

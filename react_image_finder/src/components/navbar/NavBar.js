@@ -3,7 +3,7 @@ import AppBar from 'material-ui/AppBar';
 
 const NavBar = () => {
     return (
-        <AppBar title="Infinite Scroll Image Finder" />
+        <AppBar title="INFINITE SCROLL IMAGE BROWSER"/>
     )
 }
 

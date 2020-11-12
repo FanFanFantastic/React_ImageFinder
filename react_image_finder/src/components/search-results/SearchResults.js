@@ -2,11 +2,7 @@ import React, { useRef, useCallback } from 'react';
 import PropType from 'prop-types';
 import { GridList, GridTile } from "material-ui/GridList";
 import IconButton from 'material-ui/IconButton';
-import ZoomIn from 'material-ui/svg-icons/action/zoom-in';
 import ThumbsUp from 'material-ui/svg-icons/action/thumb-up';
-
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
 
 const SearchResults = ({setSearchState, searchState, loading }) => {
 
@@ -15,8 +11,6 @@ const SearchResults = ({setSearchState, searchState, loading }) => {
 
     const observer = useRef();
     const lastImageElementRef = useCallback((node)=>{
-        console.log("last element",node);
-        console.log(loading);
 
         //check loading and stop
         if(loading) return;
@@ -73,15 +67,10 @@ const SearchResults = ({setSearchState, searchState, loading }) => {
 
     return (
         <div>
-            Images Results
             {imageListContent}
         </div>
     )
 }
-
-// SearchResults.propTypes = {
-//     images: PropType.array.isRequired
-// }
 
 export default SearchResults;
 

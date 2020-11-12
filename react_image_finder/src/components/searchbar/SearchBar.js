@@ -3,10 +3,7 @@ import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import SearchResults from '../search-results/SearchResults';
-
-import ImageSearchService from '../service/ImageSearchService';
 import SearchStateObject from '../../model/searchState';
-
 import axios from 'axios';
 
 
@@ -14,27 +11,15 @@ let timeout = 0;
 
 const SearchBar = () => {
     
+    //Variable Declarations
     const [searchState, setSearchState] = useState(SearchStateObject);
     const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(false);
-    // const [searchText, setsearchText] = useState(SearchStateObject.searchText);
-    // const [searchPage, setsearchPage] = useState(SearchStateObject.page);
+
     let searchText = searchState.searchText;
     let searchPage = searchState.page;
+    let searchOrder = searchState.order;
+    let searchColor = searchState.color;
 
-
-    // const onAmountChange = (e, index, value) => {
-    //     setSearchState({
-    //         ...searchState,
-    //         amount: value
-    //     });
-    // }
-
-    //let returnedSearchState = ImageSearchService(searchState);
-    //calling api
-    // useEffect(()=>{
-    //     setSearchState({...searchState, images:[] })
-    // }, searchState)
     useEffect(() => {
         setSearchState({
             ...searchState,
@@ -43,7 +28,6 @@ const SearchBar = () => {
     },[searchText])
 
     useEffect(() => {
-
         //new state after user typed rom the last frame
 
         //call api call after user finishes typing
@@ -57,76 +41,85 @@ const SearchBar = () => {
             //SetLoading
             setLoading(true);
 
-            // console.log("search...", searchState.searchText);
+            // alternatively, you can use cancel token to mimic the infinite scroll
             if(searchState.searchText){
-                axios.get(`${SearchStateObject.apiURL}/?key=${SearchStateObject.apiKey}&q=${searchState.searchText}&image_type=photo&page=${searchState.page}&safesearch=true`)
+                axios.get(`
+                    ${SearchStateObject.apiURL}/?key=${SearchStateObject.apiKey}&q=${searchState.searchText}&image_type=photo&page=${searchState.page}&order=${searchState.order}&colors=${searchState.color}&safesearch=true
+                `)
                 .then((res)=>{
-                    console.log("searching:", searchState.searchText);
-    
-                    console.log("axios:", res);
-    
-                    // setSearchState((previousState)=> {
-                    //     return {...previousState,
-                    //     images: res.data.hits}
-                    // });
-                    // setSearchState({
-                    //     ...searchState,
-                    //     images: [...searchState.images, ...res.data.hits]
-                    // });
     
                     setSearchState({
                         ...searchState,
                         images: [...searchState.images, ...res.data.hits]
                     });
-
+   
                     //Finished loading
-                    setLoading(false);
-    
-                    //setsearchText(searchState.searchText);
- 
+                    setLoading(false); 
 
                 }).catch((err)=> console.log(err))
 
             }
 
-        }, 300);
+        }, 400);
 
 
-    }, [searchText, searchPage]);
+    }, [searchText, searchPage, searchOrder, searchColor]);
 
 
-    const handleSearchTerm = (e) => {
-
+    const onSearchTerm = (e) => {
         setSearchState({
             ...searchState,
-            [e.target.name]: e.target.value
+           searchText : e.target.value
         });
+    }
 
+    const onColorChange = (e, index, value) => {
+        //Check if search Color is changed, if it is, then reset the current color to "" 
+        setSearchState({
+            ...searchState,
+            images:[],
+            color: value == "default"? "": value
+        });
+    }
+
+    const onOrderChange = (e, index, value) => {
+        //Check if searchOrder is changed, if it is replace the current images
+        setSearchState({
+            ...searchState,
+            images:[],
+            order: value
+        });
     }
 
 
     return (
-        <div>
-            {/* {console.log(searchState.images)} */}
+        <div id="Search-bar-container">
             <TextField 
                 name="searchText"
                 value={searchState.searchText}
-                onChange= {handleSearchTerm}
+                onChange= {onSearchTerm}
                 floatingLabelText="Search Your Images"
                 fullWidth={true}
             />
 
             <br/>
 
-            {/* <SelectField name="amount" floatingLabelText="Amount" value={searchState.amount} onChange={onAmountChange}>
-                <MenuItem value={5} primaryText="5" />
-                <MenuItem value={10} primaryText="10" />
-                <MenuItem value={15} primaryText="15" />
-                <MenuItem value={15} primaryText="30" />
-                <MenuItem value={50} primaryText="50" />
-            </SelectField> */}
+            <SelectField name="color" floatingLabelText="Color" value={searchState.color} onChange={onColorChange}>
+                <MenuItem value={"default"} primaryText="Default" />
+                <MenuItem value={"red"} primaryText="Red" />
+                <MenuItem value={"orange"} primaryText="Orange" />
+                <MenuItem value={"yellow"} primaryText="Yellow" />
+                <MenuItem value={"green"} primaryText="Green" />
+                <MenuItem value={"blue"} primaryText="Blue" />
+            </SelectField>
+
+            <SelectField name="order" floatingLabelText="Order" value={searchState.order} onChange={onOrderChange}>
+                <MenuItem value={"popular"} primaryText="Popular" />
+                <MenuItem value={"latest"} primaryText="Latest" />
+            </SelectField>
 
             <br/>
+
 
             { searchState.images.length > 0 ? <SearchResults setSearchState={setSearchState} searchState={searchState} loading={loading}/> : null }
 
