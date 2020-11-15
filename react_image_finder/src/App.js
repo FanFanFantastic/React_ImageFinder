@@ -7,12 +7,13 @@ import SearchBar from './components/searchbar/SearchBar';
 
 function App() {
   return (
-    <div className="App">
-      <MuiThemeProvider>
-          <NavBar/>
-          <SearchBar/>
-      </MuiThemeProvider>    
-    </div>
+    <MuiThemeProvider>
+
+      <div className="App">
+            <NavBar/>
+            <SearchBar/>
+      </div>
+    </MuiThemeProvider>    
   );
 }
 
