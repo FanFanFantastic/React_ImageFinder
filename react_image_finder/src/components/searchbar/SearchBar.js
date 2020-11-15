@@ -28,28 +28,14 @@ const SearchBar = () => {
     },[searchText])
 
     useEffect(() => {
-        //new state after user typed rom the last frame
+        //new state after user typed from the last frame
 
-        //call api call after user finishes typing
-        // console.log("timeout",timeout);
-        // if(timeout){
-        //     clearTimeout(timeout);
-        // }
-
-        // timeout = setTimeout(() => {
-        //     //search
-        //     console.log("searchText Changed to",searchState.searchText);
-
-        //     //SetLoading
-
-
-        // }, 200);
 
         let cancel;
         setLoading(true);
 
-        // alternatively, you can use cancel token to mimic the infinite scroll
-        
+        //*Implemented - alternatively, you can use cancel token to mimic the infinite scroll
+        //call api call after user finishes typing
         axios({
             method: 'GET',
             url:`
@@ -68,8 +54,6 @@ const SearchBar = () => {
 
         }).catch((err)=> console.log(err))
 
-        //}
-
         return ()=>{
             return cancel();
         }
@@ -78,7 +62,6 @@ const SearchBar = () => {
 
 
     const onSearchTerm = (e) => {
-        console.log(e.target.value);
         setSearchState({
             ...searchState,
            searchText : e.target.value
