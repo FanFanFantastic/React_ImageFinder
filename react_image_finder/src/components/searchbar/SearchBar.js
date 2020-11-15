@@ -7,7 +7,7 @@ import SearchStateObject from '../../model/searchState';
 import axios from 'axios';
 
 
-let timeout = 0;
+// let timeout = 0;
 
 const SearchBar = () => {
     
@@ -31,42 +31,54 @@ const SearchBar = () => {
         //new state after user typed rom the last frame
 
         //call api call after user finishes typing
-        if(timeout){
-            clearTimeout(timeout);
+        // console.log("timeout",timeout);
+        // if(timeout){
+        //     clearTimeout(timeout);
+        // }
+
+        // timeout = setTimeout(() => {
+        //     //search
+        //     console.log("searchText Changed to",searchState.searchText);
+
+        //     //SetLoading
+
+
+        // }, 200);
+
+        let cancel;
+        setLoading(true);
+
+        // alternatively, you can use cancel token to mimic the infinite scroll
+        
+        axios({
+            method: 'GET',
+            url:`
+            ${SearchStateObject.apiURL}/?key=${SearchStateObject.apiKey}&q=${searchState.searchText}&image_type=photo&page=${searchState.page}&order=${searchState.order}&colors=${searchState.color}&safesearch=true`,
+            cancelToken: new axios.CancelToken(c => cancel = c),
+        })
+        .then((res)=>{
+
+            setSearchState({
+                ...searchState,
+                images: [...searchState.images, ...res.data.hits]
+            });
+
+            //Finished loading
+            setLoading(false); 
+
+        }).catch((err)=> console.log(err))
+
+        //}
+
+        return ()=>{
+            return cancel();
         }
-
-        timeout = setTimeout(() => {
-            //search
-
-            //SetLoading
-            setLoading(true);
-
-            // alternatively, you can use cancel token to mimic the infinite scroll
-            if(searchState.searchText){
-                axios.get(`
-                    ${SearchStateObject.apiURL}/?key=${SearchStateObject.apiKey}&q=${searchState.searchText}&image_type=photo&page=${searchState.page}&order=${searchState.order}&colors=${searchState.color}&safesearch=true
-                `)
-                .then((res)=>{
-    
-                    setSearchState({
-                        ...searchState,
-                        images: [...searchState.images, ...res.data.hits]
-                    });
-   
-                    //Finished loading
-                    setLoading(false); 
-
-                }).catch((err)=> console.log(err))
-
-            }
-
-        }, 400);
-
 
     }, [searchText, searchPage, searchOrder, searchColor]);
 
 
     const onSearchTerm = (e) => {
+        console.log(e.target.value);
         setSearchState({
             ...searchState,
            searchText : e.target.value
