@@ -7,5 +7,3 @@ A Responsive infinite scrollable image browser implemented using react hooks and
 #A Live Preview Of the Site
 https://fanfanfantastic.github.io/React_ImageFinder/
 
-<https://fanfanfantastic.github.io/React_ImageFinder/>
-
